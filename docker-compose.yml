@@ -1,0 +1,32 @@
+name: magnus
+
+services:
+  monitor:
+    build: .
+    container_name: magnus-monitor
+    restart: unless-stopped
+    # Variáveis do .env (senhas/chaves) entram só no container, nunca na imagem.
+    env_file: .env
+    environment:
+      DB_PATH: /data/monitor.db
+    ports:
+      # Só localhost: o painel não fica exposto para a rede.
+      - "127.0.0.1:8088:8088"
+    volumes:
+      # Volume nomeado = histórico de quedas sobrevive a `docker compose down`.
+      - monitor_data:/data
+
+  # Modo demonstração: mesmo painel com dados fictícios, sem conectar em nada.
+  # Sobe com:  docker compose --profile demo up -d demo
+  demo:
+    build: .
+    container_name: magnus-demo
+    profiles: ["demo"]
+    command: ["python", "demo.py"]
+    environment:
+      PANEL_TITLE: Ramais
+    ports:
+      - "127.0.0.1:8088:8088"
+
+volumes:
+  monitor_data:

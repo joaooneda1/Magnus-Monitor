@@ -1,0 +1,19 @@
+[Unit]
+Description=Magnus Monitor - painel de ramais e alertas
+After=network-online.target asterisk.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=magnusmon
+WorkingDirectory=/opt/magnus-monitor
+ExecStart=/opt/magnus-monitor/venv/bin/python /opt/magnus-monitor/monitor.py
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/magnus-monitor
+
+[Install]
+WantedBy=multi-user.target
